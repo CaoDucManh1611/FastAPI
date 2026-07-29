@@ -10,6 +10,8 @@ env/
 *.sqlite
 *.sqlite3
 
+app/static/covers/*
+!app/static/covers/.gitkeep
+
 .env
 .vscode/
-
