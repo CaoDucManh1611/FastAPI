@@ -1,4 +1,4 @@
-name: FastAPI CI
+name: FastAPI CI/CD
 
 on:
   push:
@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   build:
+    name: CI
     runs-on: ubuntu-latest
 
     steps:
@@ -32,9 +33,35 @@ jobs:
           python -m compileall app
 
       - name: Run tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}
         run: |
           pytest
 
       - name: Build Docker image
         run: |
           docker build -t hoc-fastapi .
+
+  cd:
+    name: CD
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t hoc-fastapi:${{ github.sha }} .
+
+      - name: Save Docker image
+        run: |
+          docker save hoc-fastapi:${{ github.sha }} -o hoc-fastapi-image.tar
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoc-fastapi-image
+          path: hoc-fastapi-image.tar
