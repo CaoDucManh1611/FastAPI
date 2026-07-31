@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env
+.venv
+venv
+env
+__pycache__
+*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+*.db
+*.sqlite
+*.sqlite3
+app.db
+Dockerfile
+README.md
